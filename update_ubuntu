@@ -1,0 +1,47 @@
+#!/bin/bash
+
+#--------------
+# Description : Ubuntu update script
+# Author      : Samiux (https://github.com/samiux/update-scripts)
+# Date        : JAN 27,2020
+#--------------
+
+# https://stackoverflow.com/questions/5947742/how-to-change-the-output-color-of-echo-in-linux
+# https://en.wikipedia.org/wiki/ANSI_escape_code
+
+GREEN='\033[0;32m'
+RED='\033[0;31m'
+RESET='\033[0m'
+
+# get the input
+INPUT=$0
+# get the string after "_"
+SUBSTRING=$(echo $INPUT | cut -d '_' -f 2)
+# uppercase the first character
+OUTPUT=$(echo "${SUBSTRING^}")
+
+# check update
+echo ""
+echo -e "${GREEN}Updating $OUTPUT ...${RESET}"
+sudo apt update
+sudo apt -y dist-upgrade
+sudo apt -y autoclean
+sudo apt -y autoremove
+
+echo ""
+echo -e "${GREEN}Triming SSD ...${RESET}"
+sudo fstrim -av
+
+# check if reboot is required
+echo ""
+
+if [ -f /var/run/reboot-required ]
+then
+	echo -e "${RED}$OUTPUT is updated.  Reboot is required!${RESET}"
+else
+	echo -e "${GREEN}$OUTPUT is updated!${RESET}"
+fi
+
+echo ""
+
+# EOF
