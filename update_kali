@@ -29,6 +29,10 @@ sudo apt -y autoclean
 sudo apt -y autoremove
 
 echo ""
+echo -e "${GREEN}Updating snap packages ...${RESET}"
+sudo snap refresh
+
+echo ""
 echo -e "${GREEN}Triming SSD ...${RESET}"
 sudo fstrim -av
 
