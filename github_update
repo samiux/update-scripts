@@ -1,0 +1,88 @@
+#!/bin/bash
+
+#
+# Name    : GitHub respositories update script
+# Author  : Samiux (https://samiux.github.io)
+# Date    : SEP 30, 2020
+# Version : 1.0
+# License : GPL v3.0
+#
+# Files   : (1) github_update
+#           (2) github.conf
+#           (3) respo.txt
+#
+# Usage   : ./github_update
+#
+
+GREEN='\033[0;32m'
+RED='\033[0;31m'
+RESET='\033[0m'
+
+FILE1="github.conf"
+FILE2="respo.txt"
+
+if [ -f "$FILE1" ]; then
+	if [ ! -z "$FILE1" ]; then
+		# load configure data
+		. "$FILE1"
+	else
+		echo -e "${RED}Error: $FILE1 is empty!${RESET}"
+		exit 1
+	fi
+else
+	echo -e "${RED}Error: $FILE1 not exists!  Default is setting up ...${RESET}"
+	# default values
+	echo 'URL="https://github.com"' > "$FILE1"
+	echo 'USERNAME="samiux"' >> "$FILE1"
+	# load configure data
+	#. "$FILE1"
+	exit 1
+fi
+
+if [ -f "$FILE2" ]; then
+	if [ -z "$FILE2" ]; then
+		echo -e "${RED}Error: $FILE2 is empty!${RESET}"
+		exit 1
+	fi
+else
+	echo -e "${RED}Error: $FILE2 not exists!  Default is setting up ....${RESET}"
+	# default values
+	echo "samiux.github.io" > "$FILE2"
+	echo "croissants" >> "$FILE2"
+	echo "croissants-hidps" >> "$FILE2"
+	echo "longjing" >> "$FILE2"
+	echo "chameleon" >> "$FILE2"
+	echo "sandcastle" >> "$FILE2"
+	echo "shodan-eye" >> "$FILE2"
+	echo "update-scripts" >> "$FILE2"
+	echo "images" >> "$FILE2"
+	echo "waidps" >> "$FILE2"
+	echo "update-croissants" >> "$FILE2"
+	exit 1
+fi
+
+# main routine
+INPUT="$URL/$USERNAME/"
+
+while IFS= read -r LINE
+do
+	# check if empty line or not
+	if [ ! -z "$LINE" ]; then
+		OUTPUT="$INPUT$LINE"
+		# check if the directory exist or not
+		if [ ! -d "$LINE" ]; then
+			echo -e "${GREEN}Cloning $LINE ...${RESET}"
+			git clone "$OUTPUT"
+		else
+			cd "$LINE"
+			# check if git respository or not
+			if [ -d .git ]; then
+				echo -e "${GREEN}Pulling $LINE ...${RESET}"
+				git pull
+			fi
+			cd ..
+		fi
+	fi
+done < "$FILE2"
+
+# EOF

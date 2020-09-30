@@ -1,0 +1,54 @@
+#!/bin/bash
+
+#
+# Name    : GitHub respositories delete script (delete local copy only)
+# Author  : Samiux (https://samiux.github.io)
+# Date    : SEP 30, 2020
+# Version : 1.0
+# License : GPL v3.0
+#
+# Files   : (1) github_delete
+#           (2) respo.txt
+#
+# Usage   : ./github_delete all
+#           ./github_delete croissants
+#
+
+GREEN='\033[0;32m'
+RED='\033[0;31m'
+RESET='\033[0m'
+
+FILE="respo.txt"
+
+if [ -f "$FILE" ]; then
+        if [ -z "$FILE" ]; then
+                echo -e "${RED}Error: $FILE is empty!${RESET}"
+                exit 1
+	fi
+else
+	echo -e "${RED}Error: $FILE not exists!${RESET}"
+	exit 1
+fi
+
+# command parameter
+CMD="$1"
+
+if [ ! -z "$CMD" ]; then
+	if [ "$CMD" == "all" ] || [ "$CMD" == "ALL" ]; then
+		while IFS= read -r LINE
+		do
+			# check if empty line or not
+			if [ ! -z "$LINE" ]; then
+				echo -e "${GREEN}Deleting $LINE ...${RESET}"
+				sudo rm -R "$LINE"
+			fi
+		done < "$FILE"
+	else
+		echo -e "${GREEN}Deleting $CMD ...${RESET}"
+		sudo rm -R "$CMD"
+	fi
+else
+	echo -e "${RED}Incomplete command!  Do nothing!${RESET}"
+fi
+
+# EOF
