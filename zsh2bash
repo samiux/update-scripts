@@ -1,0 +1,4 @@
+#!/bin/zsh
+
+chsh -s /bin/bash
+source ~/.bashrc

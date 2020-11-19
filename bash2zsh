@@ -1,0 +1,7 @@
+#!/bin/bash
+
+cp -i .bashrc{,.bak}
+cp -i /etc/skel/.bashrc ~/
+cp -i /etc/skel/.zshrc ~/
+chsh -s /bin/zsh
+source ~/.zshrc
