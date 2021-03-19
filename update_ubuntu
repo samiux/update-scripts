@@ -24,7 +24,7 @@ OUTPUT=$(echo "${SUBSTRING^}")
 echo ""
 echo -e "${GREEN}Updating $OUTPUT ...${RESET}"
 sudo apt update
-sudo apt -y dist-upgrade
+sudo apt -y dist-upgrade --allow-downgrades
 sudo apt -y autoclean
 sudo apt -y autoremove
 
