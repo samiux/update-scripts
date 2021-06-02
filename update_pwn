@@ -1,0 +1,43 @@
+#!/bin/bash
+
+#--------------
+# Description : PWN update script for Ubuntu
+# Author      : Samiux (https://github.com/samiux/update-scripts)
+# Date        : MAY 03,2021
+#--------------
+
+# https://stackoverflow.com/questions/5947742/how-to-change-the-output-color-of-echo-in-linux
+# https://en.wikipedia.org/wiki/ANSI_escape_code
+
+GREEN='\033[0;32m'
+RED='\033[0;31m'
+RESET='\033[0m'
+
+# get the input
+INPUT=$0
+# get the string after "_"
+SUBSTRING=$(echo $INPUT | cut -d '_' -f 2)
+# uppercase the first character
+OUTPUT=$(echo "${SUBSTRING^}")
+
+# should not be root
+if [[ $EUID -eq 0 ]]; then
+	echo ""
+	echo -e "${RED}This script must NOT be ran as root!${RESET}"
+	echo ""
+	exit 1
+fi
+
+echo ""
+echo -e "${GREEN}Updating GEF ...${RESET}"
+python3 ~/.gef-*.py --update
+pip3 install --upgrade capstone unicorn keystone-engine ropper
+echo ""
+echo -e "${GREEN}Updating pwntools ...${RESET}"
+pwn update
+echo ""
+echo -e "${GREEN}$OUTPUT (GEF and pwntools) is updated!${RESET}"
+echo ""
+echo -e "Please also check if ${GREEN}ghidra${RESET} and ${GREEN}radare2${RESET} have any updates!"
+echo ""
+# EOF
