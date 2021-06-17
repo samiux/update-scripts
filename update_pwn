@@ -3,7 +3,7 @@
 #--------------
 # Description : PWN update script for Ubuntu
 # Author      : Samiux (https://github.com/samiux/update-scripts)
-# Date        : MAY 03,2021
+# Date        : JUN 17, 2021
 #--------------
 
 # https://stackoverflow.com/questions/5947742/how-to-change-the-output-color-of-echo-in-linux
@@ -29,14 +29,18 @@ if [[ $EUID -eq 0 ]]; then
 fi
 
 echo ""
-echo -e "${GREEN}Updating GEF ...${RESET}"
-python3 ~/.gef-*.py --update
-pip3 install --upgrade capstone unicorn keystone-engine ropper
+#echo -e "${GREEN}Updating GEF ...${RESET}"
+echo -e "${GREEN}Updating pwndbg ...${RESET}"
+#python3 ~/.gef-*.py --update
+#pip3 install --upgrade capstone unicorn keystone-engine ropper
+cd ~/pwndbg
+python3 -m pip install -Ur requirements.txt
 echo ""
 echo -e "${GREEN}Updating pwntools ...${RESET}"
 pwn update
 echo ""
-echo -e "${GREEN}$OUTPUT (GEF and pwntools) is updated!${RESET}"
+#echo -e "${GREEN}$OUTPUT (GEF and pwntools) is updated!${RESET}"
+echo -e "${GREEN}$OUTPUT (pwndbg and pwntools) is updated!${RESET}"
 echo ""
 echo -e "Please also check if ${GREEN}ghidra${RESET} and ${GREEN}radare2${RESET} have any updates!"
 echo ""
