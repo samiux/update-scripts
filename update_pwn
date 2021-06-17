@@ -34,6 +34,7 @@ echo -e "${GREEN}Updating pwndbg ...${RESET}"
 #python3 ~/.gef-*.py --update
 #pip3 install --upgrade capstone unicorn keystone-engine ropper
 cd ~/pwndbg
+git pull
 python3 -m pip install -Ur requirements.txt
 echo ""
 echo -e "${GREEN}Updating pwntools ...${RESET}"
