@@ -40,6 +40,10 @@ echo ""
 echo -e "${GREEN}Updating pwntools ...${RESET}"
 pwn update
 echo ""
+echo -e "${GREEN}Updating libc-database ...${RESET}"
+cd ~/libc-database
+git pull
+echo ""
 #echo -e "${GREEN}$OUTPUT (GEF and pwntools) is updated!${RESET}"
 echo -e "${GREEN}$OUTPUT (pwndbg and pwntools) is updated!${RESET}"
 echo ""
