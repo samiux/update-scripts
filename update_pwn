@@ -39,6 +39,7 @@ python3 -m pip install -Ur requirements.txt
 echo ""
 echo -e "${GREEN}Updating pwntools ...${RESET}"
 pwn update
+pip install -U pwntools
 echo ""
 echo -e "${GREEN}Updating libc-database ...${RESET}"
 cd ~/libc-database
