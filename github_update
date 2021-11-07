@@ -61,6 +61,7 @@ else
 	echo "idps" >> "$FILE2"
 	echo "idps-host" >> "$FILE2"
 	echo "lkrg" >> "$FILE2"
+	echo "CTF" >> "$FILE2"
 	exit 1
 fi
 
