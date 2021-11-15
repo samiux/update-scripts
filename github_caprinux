@@ -1,0 +1,15 @@
+#!/bin/bash
+
+GREEN='\033[0;32m'
+RED='\033[0;31m'
+RESET='\033[0m'
+
+echo -e "${GREEN}Pulling caprinux.github.io ...${RESET}"
+cd ~/github/caprinux.github.io
+git pull
+
+echo -e "${GREEN}Pulling ctf-writeups ...${RESET}"
+cd ~/github/ctf-writeups
+git pull
+
+cd ~/github
