@@ -1,0 +1,40 @@
+#!/bin/bash
+
+# Description : set "conservative" cpufreq governor for modern CPU script
+# Author      : Samiux (https://samiux.github.io)
+# Date        : Dec 19, 2021
+# Version     : 0.2
+# Resources   : (1) https://linux-sunxi.org/Cpufreq
+#               (2) https://www.kernel.org/doc/Documentation/cpu-freq/governors.txt
+
+# colour defined
+GREEN='\033[0;32m'
+RED='\033[0;31m'
+RESET='\033[0m'
+
+# get the total number of core/thread
+CORES=$(nproc --all)
+# better for battery powered device
+GOVERNOR="conservative"
+# most likely default setting
+#GOVERNOR="ondemand""
+
+# check if CPU has this feature
+cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_governors | grep $GOVERNOR &> /dev/null
+if [ $? == 0 ]; then
+	# this one
+	for (( i=0; i<=$CORES-1; i++ ))
+	do
+		echo $GOVERNOR | sudo tee -a /sys/devices/system/cpu/cpu$i/cpufreq/scaling_governor &> /dev/null
+	done
+	# or simply just one liner
+	#echo $GOVERNOR | sudo tee -a /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor &> /dev/null
+
+	# display result
+	echo -e "${GREEN}Governor conservative is set!${RESET}"
+else
+	# display result
+	echo -e "${RED}Governor conservative is NOT supported by CPU!${RESET}"
+fi
+
+# EOF
