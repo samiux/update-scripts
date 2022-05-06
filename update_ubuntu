@@ -30,9 +30,7 @@ sudo apt -y autoremove
 
 echo ""
 echo -e "${GREEN}Updating snap packages ...${RESET}"
-sudo snap refresh snapd
-sudo snap refresh cherrytree
-sudo snap refresh youtube-dl
+sudo snap refresh --list
 
 echo ""
 echo -e "${GREEN}Triming SSD ...${RESET}"
