@@ -29,6 +29,10 @@ if [[ $EUID -eq 0 ]]; then
 fi
 
 echo ""
+echo -e "${GREEN}Updating pip ...${RESET}"
+pip install --upgrade pip
+
+echo ""
 echo -e "${GREEN}Updating pwntools ...${RESET}"
 pwn update
 pip install -U pwntools
