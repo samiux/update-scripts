@@ -2,7 +2,7 @@
 
 input="malicious.url"
 n=100000000
-x=42
+x=43
 
 while IFS= read -r domain; do
 	printf 'drop dns any any -> any any (msg: "DNS %s"; dns.query; content:"%s"; nocase; pcre:"/%s$/"; classtype:policy-violation; sid: %d; rev:%s;)\n' "$domain" "$domain" "$domain" "$n" "$x" >> malicious.rules
