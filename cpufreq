@@ -17,7 +17,7 @@ CORES=$(nproc --all)
 # better for battery powered device
 GOVERNOR="conservative"
 # most likely default setting
-#GOVERNOR="ondemand""
+#GOVERNOR="ondemand"
 
 # check if CPU has this feature
 cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_governors | grep $GOVERNOR &> /dev/null
@@ -31,10 +31,10 @@ if [ $? == 0 ]; then
 	#echo $GOVERNOR | sudo tee -a /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor &> /dev/null
 
 	# display result
-	echo -e "${GREEN}Governor conservative is set!${RESET}"
+	echo -e "${GREEN}Governor $GOVERNOR is set!${RESET}"
 else
 	# display result
-	echo -e "${RED}Governor conservative is NOT supported by CPU!${RESET}"
+	echo -e "${RED}Governor $GOVERNOR is NOT supported by CPU!${RESET}"
 fi
 
 # EOF
