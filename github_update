@@ -48,20 +48,11 @@ else
 	echo -e "${RED}Error: $FILE2 not exists!  Default is setting up ....${RESET}"
 	# default values
 	echo "samiux.github.io" > "$FILE2"
-	echo "croissants" >> "$FILE2"
-	echo "croissants-hidps" >> "$FILE2"
-	echo "longjing" >> "$FILE2"
-	echo "chameleon" >> "$FILE2"
-	echo "sandcastle" >> "$FILE2"
-	echo "shodan-eye" >> "$FILE2"
-	echo "update-scripts" >> "$FILE2"
-	echo "images" >> "$FILE2"
-	echo "waidps" >> "$FILE2"
-	echo "update-croissants" >> "$FILE2"
 	echo "idps" >> "$FILE2"
-	echo "idps-host" >> "$FILE2"
-	echo "lkrg" >> "$FILE2"
-	echo "CTF" >> "$FILE2"
+	echo "taro" >> "$FILE2"
+	echo "update-scripts" >> "$FILE2"
+	echo "update-croissants" >> "$FILE2"
+	echo "images" >> "$FILE2"
 	exit 1
 fi
 

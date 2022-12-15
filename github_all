@@ -1,5 +1,4 @@
 #!/bin/bash
 
 ./github_update
-./github_caprinux
 
