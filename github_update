@@ -50,8 +50,10 @@ else
 	echo "samiux.github.io" > "$FILE2"
 	echo "idps" >> "$FILE2"
 	echo "taro" >> "$FILE2"
+	echo "lychee" >> "$FILE2"
 	echo "update-scripts" >> "$FILE2"
 	echo "update-croissants" >> "$FILE2"
+	echo "CTF" >> "$FILE2"
 	echo "images" >> "$FILE2"
 	exit 1
 fi
