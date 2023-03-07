@@ -52,6 +52,8 @@ else
 	echo "taro" >> "$FILE2"
 	echo "garlic" >> "$FILE2"
 	echo "kale" >> "$FILE2"
+	echo "rosemary" >> "$FILE2"
+	echo "garland" >> "$FILE2"
 	echo "lychee" >> "$FILE2"
 	echo "update-scripts" >> "$FILE2"
 	echo "update-croissants" >> "$FILE2"
