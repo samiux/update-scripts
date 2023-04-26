@@ -2,7 +2,7 @@
 
 input="phishings.txt"
 n=100000000
-x=184
+x=185
 
 while IFS= read -r domain; do
 	printf 'drop dns any any -> any any (msg: "DNS Phishing %s"; dns.query; content:"%s"; nocase; pcre:"/%s$/"; priority:1; classtype:policy-violation; sid: %d; rev:%s;)\n' "$domain" "$domain" "$domain" "$n" "$x" >> malicious.rules
