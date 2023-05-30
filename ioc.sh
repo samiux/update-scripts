@@ -18,4 +18,6 @@ sed -e 's/$/,1,10/' -i ips.txt
 
 cp ips.txt reputation.blacklist
 
-echo " Finished!  Upload domains.txt, domains_iocs.list and reputation.blacklist."
+cat iocs_list.json  | jq -c -r '.data[] | select( .ioc_type == "sha256_hash") | .ioc' > sha256_iocs.list
+
+echo " Finished!  Upload domains.txt, domains_iocs.list, sha256_iocs.list and reputation.blacklist."
