@@ -43,7 +43,7 @@ echo -e "${GREEN}Updating pwndbg ...${RESET}"
 #pip3 install --upgrade capstone unicorn keystone-engine ropper
 cd ~/pwndbg
 git pull
-python3 -m pip install -Ur requirements.txt
+python3 -m pip install -Ur dev-requirements.txt
 echo ""
 echo -e "${GREEN}Updating libc-database ...${RESET}"
 cd ~/libc-database
