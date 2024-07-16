@@ -1,0 +1,86 @@
+<html><head><base href="https://websim.ai" /><title>RCCC HKI Duty List Search</title><style>
+  body {
+    font-family: Arial, sans-serif;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f0f0f0;
+  }
+  h1 {
+    color: #333;
+    text-align: center;
+  }
+  .container {
+    background-color: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  .input-group {
+    margin-bottom: 20px;
+  }
+  label {
+    display: block;
+    margin-bottom: 5px;
+  }
+  input[type="date"] {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  button:hover {
+    background-color: #45a049;
+  }
+  .result {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #e7f3fe;
+    border-left: 5px solid #2196F3;
+  }
+</style></head><body>
+  <h1>RCCC HKI Duty List Search</h1>
+  <div class="container">
+    <p>Version 0.6 by Samiux (<a href="https://samiux.github.io">https://samiux.github.io</a>)</p>
+    <div class="input-group">
+      <label for="date">Enter the date:</label>
+      <input type="date" id="date" required>
+    </div>
+    <button onclick="searchDuty()">Search</button>
+    <div id="result" class="result"></div>
+  </div>
+
+  <script>
+    const list = ['C1', 'C2', 'C3', 'C4', 'L ', 'TO', 'B1', 'B2', 'B3', 'B4', 'L ', 'A1', 'A2', 'A3', 'A4', 'L '];
+    const defaultDateList = [
+      new Date(1990, 7, 5),
+      new Date(1990, 7, 17),
+      new Date(1990, 7, 13),
+      new Date(1990, 7, 9)
+    ];
+
+    function searchDuty() {
+      const targetDate = new Date(document.getElementById('date').value);
+      let result = '';
+
+      for (let i = 0; i < 4; i++) {
+        const numOfDate = Math.floor((targetDate - defaultDateList[i]) / (1000 * 60 * 60 * 24));
+        const dayPattern = numOfDate % 16;
+        const currentDay = list[dayPattern];
+        const nextDay = list[(dayPattern + 1) % 16];
+
+        result += `Team ${i + 1}: target day is ${currentDay} and next day is ${nextDay}<br>`;
+      }
+
+      document.getElementById('result').innerHTML = result;
+    }
+  </script>
+</body></html>
