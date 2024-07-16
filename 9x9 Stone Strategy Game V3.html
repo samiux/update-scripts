@@ -1,0 +1,283 @@
+<html><head><base href="https://websim.ai" />
+<title>9x9 Stone Strategy Game - Enhanced</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #f0f0f0;
+  }
+  .game-container {
+    text-align: center;
+  }
+  .board {
+    display: inline-grid;
+    grid-template-columns: repeat(9, 40px);
+    grid-gap: 2px;
+    background-color: #000;
+    padding: 10px;
+    border-radius: 5px;
+  }
+  .cell {
+    width: 40px;
+    height: 40px;
+    background-color: #e0e0e0;
+    border-radius: 3px;
+    cursor: pointer;
+  }
+  .stone {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    margin: 2px;
+  }
+  .player { background-color: #3498db; }
+  .computer { background-color: #e74c3c; }
+  #status {
+    margin-top: 20px;
+    font-size: 18px;
+    font-weight: bold;
+  }
+  #scores {
+    margin-top: 10px;
+    font-size: 16px;
+  }
+  #restartButton {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #2ecc71;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  #restartButton:hover {
+    background-color: #27ae60;
+  }
+</style>
+</head>
+<body>
+<div class="game-container">
+  <h1>9x9 Stone Strategy Game</h1>
+  <div class="board" id="board"></div>
+  <div id="status">Your turn! Place a stone.</div>
+  <div id="scores">
+    Player: <span id="playerScore">0</span>
+    Computer: <span id="computerScore">0</span>
+  </div>
+  <button id="restartButton">Restart Game</button>
+</div>
+
+<script>
+const board = document.getElementById('board');
+const status = document.getElementById('status');
+const playerScoreEl = document.getElementById('playerScore');
+const computerScoreEl = document.getElementById('computerScore');
+const restartButton = document.getElementById('restartButton');
+
+let gameBoard = Array(9).fill().map(() => Array(9).fill(null));
+let playerScore = 0;
+let computerScore = 0;
+let gameEnded = false;
+
+function createBoard() {
+  board.innerHTML = '';
+  for (let i = 0; i < 81; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'cell';
+    cell.dataset.index = i;
+    cell.addEventListener('click', () => playerMove(i));
+    board.appendChild(cell);
+  }
+}
+
+function playerMove(index) {
+  if (gameEnded || gameBoard[Math.floor(index / 9)][index % 9]) return;
+  
+  placeStone(index, 'player');
+  checkGameEnd();
+  if (!gameEnded) {
+    status.textContent = "Computer is thinking...";
+    setTimeout(computerMove, 1000);
+  }
+}
+
+function computerMove() {
+  const startTime = Date.now();
+  let bestMove = -1;
+  let bestScore = -Infinity;
+
+  // First, check if we can prevent player from winning
+  const preventWinMove = findPreventWinMove();
+  if (preventWinMove !== -1) {
+    bestMove = preventWinMove;
+  } else {
+    // If no immediate threat, proceed with regular strategy
+    for (let i = 0; i < 9; i++) {
+      for (let j = 0; j < 9; j++) {
+        if (!gameBoard[i][j]) {
+          gameBoard[i][j] = 'computer';
+          let score = evaluateBoard('computer') - evaluateBoard('player');
+          gameBoard[i][j] = null;
+
+          if (score > bestScore) {
+            bestScore = score;
+            bestMove = i * 9 + j;
+          }
+
+          if (Date.now() - startTime > 2500) break;
+        }
+      }
+      if (Date.now() - startTime > 2500) break;
+    }
+  }
+
+  if (bestMove === -1) {
+    bestMove = gameBoard.flat().findIndex(cell => cell === null);
+  }
+
+  placeStone(bestMove, 'computer');
+  checkGameEnd();
+  if (!gameEnded) {
+    status.textContent = "Your turn! Place a stone.";
+  }
+}
+
+function findPreventWinMove() {
+  const directions = [
+    [1, 0],  // horizontal
+    [0, 1],  // vertical
+    [1, 1],  // diagonal
+    [1, -1]  // anti-diagonal
+  ];
+
+  for (let i = 0; i < 9; i++) {
+    for (let j = 0; j < 9; j++) {
+      if (gameBoard[i][j] === null) {
+        for (const [dx, dy] of directions) {
+          let playerCount = 0;
+          let emptyCount = 1; // Count the current empty cell
+
+          // Check in both directions
+          for (let k = 1; k < 9; k++) {
+            const x1 = i + k * dx;
+            const y1 = j + k * dy;
+            if (x1 >= 0 && x1 < 9 && y1 >= 0 && y1 < 9) {
+              if (gameBoard[x1][y1] === 'player') {
+                playerCount++;
+              } else if (gameBoard[x1][y1] === null) {
+                emptyCount++;
+              } else {
+                break;
+              }
+            }
+
+            const x2 = i - k * dx;
+            const y2 = j - k * dy;
+            if (x2 >= 0 && x2 < 9 && y2 >= 0 && y2 < 9) {
+              if (gameBoard[x2][y2] === 'player') {
+                playerCount++;
+              } else if (gameBoard[x2][y2] === null) {
+                emptyCount++;
+              } else {
+                break;
+              }
+            }
+          }
+
+          // If there are 5 or more player stones in a line of 9 with empty spaces
+          if (playerCount >= 5 && playerCount + emptyCount >= 9) {
+            return i * 9 + j;
+          }
+        }
+      }
+    }
+  }
+  return -1;
+}
+
+function placeStone(index, player) {
+  const [row, col] = [Math.floor(index / 9), index % 9];
+  gameBoard[row][col] = player;
+
+  const stone = document.createElement('div');
+  stone.className = `stone ${player}`;
+  board.children[index].appendChild(stone);
+
+  updateScores();
+}
+
+function updateScores() {
+  playerScore = evaluateBoard('player');
+  computerScore = evaluateBoard('computer');
+  playerScoreEl.textContent = playerScore;
+  computerScoreEl.textContent = computerScore;
+}
+
+function evaluateBoard(player) {
+  let score = 0;
+  const directions = [
+    [1, 0],  // horizontal
+    [0, 1],  // vertical
+    [1, 1],  // diagonal
+    [1, -1]  // anti-diagonal
+  ];
+
+  for (let i = 0; i < 9; i++) {
+    for (let j = 0; j < 9; j++) {
+      directions.forEach(([dx, dy]) => {
+        let count = 0;
+        for (let k = 0; k < 9; k++) {
+          const x = i + k * dx;
+          const y = j + k * dy;
+          if (x >= 0 && x < 9 && y >= 0 && y < 9 && gameBoard[x][y] === player) {
+            count++;
+          } else {
+            break;
+          }
+        }
+        if (count >= 3) {
+          if (count >= 9) score += 3;
+          else if (count >= 6) score += 2;
+          else score += 1;
+        }
+      });
+    }
+  }
+
+  return score;
+}
+
+function checkGameEnd() {
+  if (!gameBoard.flat().includes(null)) {
+    gameEnded = true;
+    if (playerScore > computerScore) {
+      status.textContent = "Game Over! You win!";
+    } else if (computerScore > playerScore) {
+      status.textContent = "Game Over! Computer wins!";
+    } else {
+      status.textContent = "Game Over! It's a tie!";
+    }
+  }
+}
+
+function restartGame() {
+  gameBoard = Array(9).fill().map(() => Array(9).fill(null));
+  playerScore = 0;
+  computerScore = 0;
+  gameEnded = false;
+  createBoard();
+  updateScores();
+  status.textContent = "Your turn! Place a stone.";
+}
+
+restartButton.addEventListener('click', restartGame);
+
+createBoard();
+</script>
+</body></html>
