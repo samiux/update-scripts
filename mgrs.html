@@ -31,7 +31,7 @@
         button:hover {
             background-color: #0056b3;
         }
-        #mgrs, #date, #horizontalAccuracy, #time, #copyright {
+        #mgrs, #date, #horizontalAccuracy, #time, #copyright, #altitude, #altitudeAccuracy, #explain, #error {
             margin-top: 20px;
             font-size: 18px;
             color: #555;
@@ -47,14 +47,17 @@
 </head>
 
 <body>
-    <h1>MGRS Locator V3.0</h1>
+    <h1>MGRS Locator V4.0</h1>
     <button id="get-location">Start Location Tracking</button>
     <div id="mgrs"></div>
     <div id="horizontalAccuracy"></div>
+    <div id="altitude"></div>
+    <div id="altitudeAccuracy"></div>
     <div id="date"></div>
     <div id="time"></div>
-    <div id="loading">Fetching location for 60 seconds ...</div>
+    <div id="loading">Fetching location for 300 seconds ...</div>
     <div id="copyright"></div>
+    <div id="explain">Altitude information is for reference only.</div>
     <div id="error"></div>
 
     <script src="https://unpkg.com/mgrs/dist/mgrs.min.js"></script>
@@ -72,6 +75,7 @@
             if (fetchInProgress) return;
             fetchInProgress = true;
             document.getElementById('loading').style.display = 'block';
+            document.getElementById('explain').style.display = 'block';
             clearDisplay();
 
             if (navigator.geolocation) {
@@ -103,7 +107,7 @@
 
                 setTimeout(() => {
                     cleanup();
-                }, 60000);
+                }, 300000);
             } else {
                 displayError('Geolocation is not supported by this browser.');
                 cleanup();
@@ -115,14 +119,17 @@
             document.getElementById('date').innerText = '';
             document.getElementById('time').innerText = '';
             document.getElementById('horizontalAccuracy').innerText = '';
+            document.getElementById('altitude').innerText = '';
+            document.getElementById('altitudeAccuracy').innerText = '';
         }
 
         async function updateDisplays(position) {
             await displayMGRS(position);
             await displayHorizontalAccuracy(position);
+            await displayAltitude(position);
+            await displayAltitudeAccuracy(position);
             displayCurrentTime();
             displayCurrentDate();
-            updateCopyrightYear();
         }
 
         async function displayMGRS(position) {
@@ -132,9 +139,19 @@
             document.getElementById('mgrs').innerText = `MGRS: ${mgrsCode}`;
         }
 
-        function displayHorizontalAccuracy(position) {
+        async function displayHorizontalAccuracy(position) {
             const horizontalAccuracy = position.coords.accuracy !== null ? position.coords.accuracy : 'Information is not available.';
             document.getElementById('horizontalAccuracy').innerText = `Horizontal Accuracy: ${typeof horizontalAccuracy === 'number' ? horizontalAccuracy.toFixed(2) + ' meters' : horizontalAccuracy}`;
+        }
+
+        async function displayAltitude(position) {
+            const altitude = position.coords.altitude !== null ? position.coords.altitude : 'Information is not available.';
+            document.getElementById('altitude').innerText = `Altitude: ${typeof altitude === 'number' ? altitude.toFixed(2) + ' meters' : altitude}`;
+        }
+
+        async function displayAltitudeAccuracy(position) {
+            const altitudeAccuracy = position.coords.altitudeAccuracy !== null ? position.coords.altitudeAccuracy : 'Information is not available.';
+            document.getElementById('altitudeAccuracy').innerText = `Alt Acc: ${typeof altitudeAccuracy === 'number' ? altitudeAccuracy.toFixed(2) + ' meters' : altitudeAccuracy}`;
         }
 
 	function displayCurrentDate() {
@@ -147,7 +164,7 @@
 	}
 
 	function displayCurrentTime() {
-	    const currentTime = new Date().toLocaleTimeString('en-US', { hour12: true });
+	    const currentTime = new Date().toLocaleTimeString('en-US', { hour12: false });
 	    document.getElementById('time').innerText = `Current Time: ${currentTime}`;
 	}
 
