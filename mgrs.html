@@ -1,195 +1,147 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MGRS Locator</title>
+    <title>MGRS Location with Altitude</title>
+    <script src="https://cdn.jsdelivr.net/npm/proj4@2.7.5/dist/proj4.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/proj4-mgrs@3.1.0/mgrs.js"></script>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            margin: 0;
+            height: 100vh;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
-            height: 100vh;
-            background-color: #f4f4f4;
-            margin: 0;
+            justify-content: center;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f0f0;
+            font-size: 1.125rem; /* Base font size increased */
         }
-        h1 {
-            color: #333;
+        .card {
+            background: white;
+            padding: 3rem; /* Increased padding */
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            margin: 2rem;
+            min-width: 400px; /* Wider card */
+            max-width: 90%;
         }
         button {
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            background-color: #007BFF;
-            color: #fff;
+            padding: 1.2rem 2.5rem;
+            font-size: 1.5rem; /* Larger button text */
+            background: #007bff;
+            color: white;
             border: none;
-            border-radius: 5px;
-            transition: background-color 0.3s;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 2rem;
         }
         button:hover {
-            background-color: #0056b3;
+            background: #0056b3;
+            transform: scale(1.05);
         }
-        #mgrs, #date, #horizontalAccuracy, #time, #copyright, #altitude, #altitudeAccuracy, #explain, #error, #declare {
-            margin-top: 20px;
-            font-size: 18px;
-            color: #555;
+        #result {
+            margin-top: 2rem;
+            line-height: 1.8;
         }
-        #loading {
-            display: none;
-            margin-top: 20px;
-            font-size: 16px;
-            color: #007BFF;
+        #error {
+            color: #dc3545;
+            margin-top: 1.5rem;
+            font-size: 1.1rem;
+        }
+        .label {
+            color: #666;
+            font-size: 1.1rem; /* Increased label size */
+            margin: 0.8rem 0;
+        }
+        .value {
+            font-size: 1.8rem; /* Much larger values */
+            margin: 1.5rem 0;
+            font-weight: bold;
+            color: #333;
+        }
+        .mgrs-code {
+            font-size: 2.2rem; /* Extra large MGRS text */
+            letter-spacing: 2px;
+            color: #2c3e50;
+            margin: 1.5rem 0;
+            word-break: break-all;
+        }
+        .accuracy {
+            font-size: 1.3rem;
+            color: #666;
         }
     </style>
-    <meta name="apple-mobile-web-app-capable" content="yes">
 </head>
-
 <body>
-    <h1>MGRS Locator V4.0</h1>
-    <button id="get-location">Start Location Tracking</button>
-    <div id="mgrs"></div>
-    <div id="horizontalAccuracy"></div>
-    <div id="altitude"></div>
-    <div id="altitudeAccuracy"></div>
-    <div id="date"></div>
-    <div id="time"></div>
-    <div id="loading">Fetching location for 300 seconds ...</div>
-    <div id="copyright"></div>
-    <div id="explain">Altitude information is for reference only.</div>
-    <div id="declare">No personal or positioning data will be collected.</div>
-    <div id="error"></div>
+    <div class="card">
+        <button onclick="getLocation()">GET CURRENT POSITION</button>
+        <div id="result"></div>
+        <div id="error"></div>
+    </div>
 
-    <script src="https://unpkg.com/mgrs/dist/mgrs.min.js"></script>
     <script>
-        let fetchInProgress = false;
-        let watchId;
-        let intervalId;
-
-        document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('get-location').addEventListener('click', handleGetLocation);
-            updateCopyrightYear();
-        });
-
-        async function handleGetLocation() {
-            if (fetchInProgress) return;
-            fetchInProgress = true;
-            document.getElementById('loading').style.display = 'block';
-            document.getElementById('explain').style.display = 'block';
-            document.getElementById('declare').style.display = 'block';
-            clearDisplay();
+        function getLocation() {
+            // Clear previous results
+            document.getElementById("error").textContent = '';
+            document.getElementById("result").textContent = '';
 
             if (navigator.geolocation) {
-                watchId = navigator.geolocation.watchPosition(
-                    async (position) => {
+                navigator.geolocation.getCurrentPosition(
+                    position => {
+                        const lat = position.coords.latitude;
+                        const lon = position.coords.longitude;
+                        const alt = position.coords.altitude;
+                        const altAccuracy = position.coords.altitudeAccuracy;
+                        
                         try {
-                            await updateDisplays(position);
-                            if (!intervalId) {
-                                intervalId = setInterval(() => {
-                                    updateDisplays(position);
-                                }, 1000);
+                            const precision = 5;
+                            const mgrs = proj4.mgrs.forward([lon, lat], precision);
+                            const gridSize = Math.pow(10, 5 - precision);
+
+                            let resultHTML = `
+                                <div class="mgrs-code">${mgrs}</div>
+                                <div class="accuracy">Grid Precision: ${gridSize}m</div>
+                                <div class="accuracy">Horizontal Accuracy: ${position.coords.accuracy.toFixed(1)}m</div>`;
+
+                            if (alt) {
+                                resultHTML += `
+                                    <div class="value">Altitude: ${alt.toFixed(1)}m</div>
+                                    <div class="accuracy">Vertical Accuracy: ${altAccuracy ? altAccuracy.toFixed(1)+'m' : 'N/A'}</div>`;
+                            } else {
+                                resultHTML += `<div class="label">Altitude data not available</div>`;
                             }
-                        } catch (error) {
-                            console.error('Error displaying position data:', error);
-                            displayError(error);
+
+                            resultHTML += `
+                                   <div class="label">Copyright &copy <strong>DeepSeek R1</strong> JAN 29, 2025</div>`;
+
+                            document.getElementById("result").innerHTML = resultHTML;
+
+                        } catch (e) {
+                            document.getElementById("error").textContent = 
+                                `Error converting coordinates: ${e.message}`;
                         }
                     },
-                    (error) => {
-                        console.error('Geolocation error:', error);
-                        displayError(error);
-                        cleanup();
+                    error => {
+                        const errors = {
+                            1: 'Permission denied',
+                            2: 'Position unavailable',
+                            3: 'Timeout'
+                        };
+                        document.getElementById("error").textContent = 
+                            `Error: ${errors[error.code] || 'Unknown error'}`;
                     },
                     {
-                        maximumAge: 0,
-                        timeout: 60000,
-                        enableHighAccuracy: true
+                        enableHighAccuracy: true,
+                        timeout: 10000,
+                        maximumAge: 0
                     }
                 );
-
-                setTimeout(() => {
-                    cleanup();
-                }, 300000);
             } else {
-                displayError('Geolocation is not supported by this browser.');
-                cleanup();
+                document.getElementById("error").textContent = 
+                    "Geolocation is not supported by your browser.";
             }
-        }
-
-        function clearDisplay() {
-            document.getElementById('mgrs').innerText = '';
-            document.getElementById('date').innerText = '';
-            document.getElementById('time').innerText = '';
-            document.getElementById('horizontalAccuracy').innerText = '';
-            document.getElementById('altitude').innerText = '';
-            document.getElementById('altitudeAccuracy').innerText = '';
-        }
-
-        async function updateDisplays(position) {
-            await displayMGRS(position);
-            await displayHorizontalAccuracy(position);
-            await displayAltitude(position);
-            await displayAltitudeAccuracy(position);
-            displayCurrentTime();
-            displayCurrentDate();
-        }
-
-        async function displayMGRS(position) {
-            const lat = position.coords.latitude;
-            const lon = position.coords.longitude;
-            const mgrsCode = mgrs.forward([lon, lat]);
-            document.getElementById('mgrs').innerText = `MGRS: ${mgrsCode}`;
-        }
-
-        async function displayHorizontalAccuracy(position) {
-            const horizontalAccuracy = position.coords.accuracy !== null ? position.coords.accuracy : 'Information is not available.';
-            document.getElementById('horizontalAccuracy').innerText = `Horizontal Accuracy: ${typeof horizontalAccuracy === 'number' ? horizontalAccuracy.toFixed(2) + ' meters' : horizontalAccuracy}`;
-        }
-
-        async function displayAltitude(position) {
-            const altitude = position.coords.altitude !== null ? position.coords.altitude : 'Information is not available.';
-            document.getElementById('altitude').innerText = `Altitude: ${typeof altitude === 'number' ? altitude.toFixed(2) + ' meters' : altitude}`;
-        }
-
-        async function displayAltitudeAccuracy(position) {
-            const altitudeAccuracy = position.coords.altitudeAccuracy !== null ? position.coords.altitudeAccuracy : 'Information is not available.';
-            document.getElementById('altitudeAccuracy').innerText = `Alt Acc: ${typeof altitudeAccuracy === 'number' ? altitudeAccuracy.toFixed(2) + ' meters' : altitudeAccuracy}`;
-        }
-
-	function displayCurrentDate() {
-	    const currentDate = new Date().toLocaleDateString('en-US', {
-	        year: 'numeric',
-	        month: 'long',
-	        day: 'numeric'
-	    });
-	    document.getElementById('date').innerText = `Current Date: ${currentDate}`;
-	}
-
-	function displayCurrentTime() {
-	    const currentTime = new Date().toLocaleTimeString('en-US', { hour12: false });
-	    document.getElementById('time').innerText = `Current Time: ${currentTime}`;
-	}
-
-        function displayError(error) {
-            document.getElementById('error').innerText = `Error: ${error.message || error}`;
-        }
-
-        function cleanup() {
-            fetchInProgress = false;
-            document.getElementById('loading').style.display = 'none';
-            if (watchId) {
-                navigator.geolocation.clearWatch(watchId);
-                watchId = null;
-            }
-            if (intervalId) {
-                clearInterval(intervalId);
-                intervalId = null;
-            }
-        }
-
-        function updateCopyrightYear() {
-            const currentYear = new Date().getFullYear();
-            document.getElementById('copyright').innerHTML = `Copyright ${currentYear} &copy; Samiux`;
         }
     </script>
 </body>
