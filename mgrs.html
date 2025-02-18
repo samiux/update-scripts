@@ -2,10 +2,9 @@
 <html>
 <head>
     <title>MGRS Location with Altitude</title>
-    <script src="https://cdn.jsdelivr.net/npm/proj4@2.7.5/dist/proj4.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/proj4-mgrs@3.1.0/mgrs.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/proj4@2.15.0/dist/proj4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mgrs@2.1.0/dist/mgrs.min.js"></script>
     <style>
-       /* ... existing styles remain unchanged ... */
         body {
             margin: 0;
             height: 100vh;
@@ -50,8 +49,7 @@
         .mgrs-code {
             font-size: 3.2rem; /* Extra large MGRS text */
             letter-spacing: 2px;
-//            color: #2c3e50;
-            color: #dc3545;
+            color: #dc3545;     // red
             margin: 1.5rem 0;
             word-break: break-all;
         }
@@ -97,6 +95,20 @@
             elements.currentTime.textContent = `Current Time: ${d.toTimeString()}`;
         }
 
+        async function getPosition() {
+            if (navigator.geolocation) {
+//                await navigator.geolocation.getCurrentPosition(
+                await navigator.geolocation.watchPosition(
+                    updatePosition,
+                    handleError,
+//                    {timeout: 5000, enableHighAccuracy: true, maximumAge: 0}  // timeout 5 seconds
+                    {enableHighAccuracy: true, maximumAge: 0}
+                );
+            } else {
+                elements.error.textContent = "Geolocation is not supported by your browser.";
+            }
+        }
+
         function updatePosition(position) {
             const lat = position.coords.latitude;
             const lon = position.coords.longitude;
@@ -139,20 +151,13 @@
             elements.error.textContent = `Error: ${errors[error.code] || 'Unknown error'}`;
         }
 
-        // Initialize time updates
+        // Initialize date and time updates
         updateTime();
-        setInterval(updateTime, 1000);
+        setInterval(updateTime, 1000);   // update per 1 second
 
-        // Initialize position watching
-        if (navigator.geolocation) {
-            navigator.geolocation.watchPosition(
-                updatePosition,
-                handleError,
-                {enableHighAccuracy: true, maximumAge: 0}
-            );
-        } else {
-            elements.error.textContent = "Geolocation is not supported by your browser.";
-        }
+        // Initialize position updates
+        getPosition();
+//        setInterval(getPosition, 10000);  // update per 10 second
     </script>
 </body>
 </html>
