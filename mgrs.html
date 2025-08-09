@@ -1,163 +1,376 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>MGRS Location with Altitude</title>
-    <script src="https://cdn.jsdelivr.net/npm/proj4@2.15.0/dist/proj4.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/mgrs@2.1.0/dist/mgrs.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MGRS Locator</title>
     <style>
         body {
-            margin: 0;
-            height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex;
             flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            padding: 30px;
+            width: 90%;
+            max-width: 600px;
+            text-align: center;
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 25px;
+            font-size: 2.2rem;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+        button {
+            padding: 14px 28px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            background: linear-gradient(to right, #3498db, #2980b9);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3);
+            margin: 15px 0;
+            width: 100%;
+            max-width: 300px;
+        }
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(52, 152, 219, 0.4);
+        }
+        button:active {
+            transform: translateY(1px);
+        }
+        button:disabled {
+            background: linear-gradient(to right, #bdc3c7, #95a5a6);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        .data-container {
+            margin-top: 25px;
+            text-align: left;
+            width: 100%;
+        }
+        .data-item {
+            background: #f8f9fa;
+            padding: 15px;
+            margin: 12px 0;
+            border-radius: 10px;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+            font-size: 17px;
+        }
+        .data-label {
+            font-weight: bold;
+            color: #3498db;
+            display: block;
+            margin-bottom: 5px;
+        }
+        #mgrs {
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            font-size: 19px;
+            color: #e74c3c;
+            letter-spacing: 1px;
+        }
+        #loading {
+            margin: 25px 0;
+            font-size: 17px;
+            color: #3498db;
+            display: flex;
             align-items: center;
             justify-content: center;
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background-color: #f0f0f0;
-            font-size: 1.125rem; /* Base font size increased */
+            gap: 12px;
         }
-        .card {
-            background: white;
-            padding: 3rem; /* Increased padding */
-            border-radius: 15px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-            margin: 2rem;
-            min-width: 400px; /* Wider card */
-            max-width: 90%;
+        .spinner {
+            border: 4px solid rgba(52, 152, 219, 0.2);
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
         }
-        #result {
-            margin-top: 2rem;
-            line-height: 1.8;
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        #explain {
+            font-size: 15px;
+            color: #7f8c8d;
+            margin-top: 20px;
+            font-style: italic;
         }
         #error {
-            color: #dc3545;
-            margin-top: 1.5rem;
-            font-size: 1.1rem;
+            color: #e74c3c;
+            margin: 20px 0;
+            padding: 15px;
+            background: #fdeded;
+            border-radius: 8px;
+            display: none;
         }
-        .label {
-            color: #666;
-            font-size: 1.8rem; /* Increased label size */
-            margin: 0.8rem 0;
+        .status {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+            font-size: 14px;
+            color: #7f8c8d;
         }
-        .value {
-            font-size: 1.8rem; /* Much larger values */
-            margin: 1.5rem 0;
-            font-weight: bold;
-            color: #333;
-        }
-        .mgrs-code {
-            font-size: 3.2rem; /* Extra large MGRS text */
-            letter-spacing: 2px;
-            color: #dc3545;     // red
-            margin: 1.5rem 0;
-            word-break: break-all;
-        }
-        .accuracy {
-            font-size: 1.3rem;
-            color: #666;
-        }
+        .accuracy-good { color: #27ae60; }
+        .accuracy-medium { color: #f39c12; }
+        .accuracy-poor { color: #e74c3c; }
     </style>
+    <meta name="apple-mobile-web-app-capable" content="yes">
 </head>
+
 <body>
-    <div class="card">
-        <div id="result">
-            <div class="label"><strong>MGRS</strong></div>
-            <div id="mgrs-code" class="mgrs-code"></div>
-            <div id="grid-precision" class="accuracy"></div>
-            <div id="horizontal-accuracy" class="accuracy"></div>
-            <div id="altitude-value" class="value"></div>
-            <div id="vertical-accuracy" class="accuracy"></div>
-            <div id="altitude-na" class="label" style="display: none;">Altitude data not available</div>
-            <div id="current-date" class="label"></div>
-            <div id="current-time" class="label"></div>
-            <div class="label">Copyright &copy; <strong>DeepSeek R1</strong> JAN 29, 2025</div>
+    <div class="container">
+        <h1>MGRS Locator V4.1</h1>
+        <button id="get-location">Start Location Tracking</button>
+        
+        <div id="loading">
+            <div class="spinner"></div>
+            <span>Active tracking - Fetching location data...</span>
         </div>
+        
         <div id="error"></div>
+        
+        <div class="data-container">
+            <div class="data-item">
+                <span class="data-label">MGRS Coordinates</span>
+                <div id="mgrs">--</div>
+            </div>
+            
+            <div class="data-item">
+                <span class="data-label">Horizontal Accuracy</span>
+                <div id="horizontalAccuracy">--</div>
+            </div>
+            
+            <div class="data-item">
+                <span class="data-label">Altitude</span>
+                <div id="altitude">--</div>
+            </div>
+            
+            <div class="data-item">
+                <span class="data-label">Altitude Accuracy</span>
+                <div id="altitudeAccuracy">--</div>
+            </div>
+            
+            <div class="data-item">
+                <span class="data-label">Current Date</span>
+                <div id="date">--</div>
+            </div>
+            
+            <div class="data-item">
+                <span class="data-label">Current Time (24h format)</span>
+                <div id="time">--</div>
+            </div>
+        </div>
+        
+        <div id="explain">Note: Altitude accuracy may vary significantly between devices and environments.</div>
+        
+        <div class="status">
+            <div id="copyright"></div>
+            <div id="timer">00:00</div>
+        </div>
     </div>
 
+    <script src="https://unpkg.com/mgrs/dist/mgrs.min.js"></script>
     <script>
-        const elements = {
-            mgrsCode: document.getElementById('mgrs-code'),
-            gridPrecision: document.getElementById('grid-precision'),
-            horizontalAccuracy: document.getElementById('horizontal-accuracy'),
-            altitudeValue: document.getElementById('altitude-value'),
-            verticalAccuracy: document.getElementById('vertical-accuracy'),
-            altitudeNa: document.getElementById('altitude-na'),
-            currentDate: document.getElementById('current-date'),
-            currentTime: document.getElementById('current-time'),
-            error: document.getElementById('error')
-        };
+        let watchId = null;
+        let timeIntervalId = null;
+        let elapsedIntervalId = null;
+        let elapsedSeconds = 0;
+        const maxTrackingTime = 300; // 5 minutes
 
-        function updateTime() {
-            const d = new Date();
-            elements.currentDate.textContent = `Current Date: ${d.toDateString()}`;
-            elements.currentTime.textContent = `Current Time: ${d.toTimeString()}`;
-        }
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('get-location').addEventListener('click', handleGetLocation);
+            updateCopyrightYear();
+        });
 
-        async function getPosition() {
+        async function handleGetLocation() {
+            const button = document.getElementById('get-location');
+            if (watchId) {
+                // If already tracking, stop tracking
+                cleanup();
+                button.textContent = 'Start Location Tracking';
+                return;
+            }
+            
+            button.textContent = 'Stop Tracking';
+            document.getElementById('error').style.display = 'none';
+            document.getElementById('loading').style.display = 'flex';
+            document.getElementById('explain').style.display = 'block';
+            
+            // Reset and start elapsed time counter
+            elapsedSeconds = 0;
+            updateTimerDisplay();
+            elapsedIntervalId = setInterval(() => {
+                elapsedSeconds++;
+                updateTimerDisplay();
+                if (elapsedSeconds >= maxTrackingTime) {
+                    cleanup();
+                }
+            }, 1000);
+            
+            // Start time display updates
+            timeIntervalId = setInterval(() => {
+                displayCurrentTime();
+                displayCurrentDate();
+            }, 1000);
+            
+            // Start geolocation tracking
             if (navigator.geolocation) {
-//                await navigator.geolocation.getCurrentPosition(
-                await navigator.geolocation.watchPosition(
-                    updatePosition,
-                    handleError,
-//                    {timeout: 5000, enableHighAccuracy: true, maximumAge: 0}  // timeout 5 seconds
-                    {enableHighAccuracy: true, maximumAge: 0}
+                watchId = navigator.geolocation.watchPosition(
+                    position => handlePositionSuccess(position),
+                    error => handlePositionError(error),
+                    {
+                        maximumAge: 0,
+                        timeout: 10000,
+                        enableHighAccuracy: true
+                    }
                 );
             } else {
-                elements.error.textContent = "Geolocation is not supported by your browser.";
+                displayError('Geolocation is not supported by this browser.');
+                cleanup();
             }
         }
 
-        function updatePosition(position) {
-            const lat = position.coords.latitude;
-            const lon = position.coords.longitude;
-            const alt = position.coords.altitude;
-            const altAccuracy = position.coords.altitudeAccuracy;
+        function handlePositionSuccess(position) {
+            displayMGRS(position);
+            displayHorizontalAccuracy(position);
+            displayAltitude(position);
+            displayAltitudeAccuracy(position);
+        }
 
+        function handlePositionError(error) {
+            let errorMessage;
+            switch(error.code) {
+                case error.PERMISSION_DENIED:
+                    errorMessage = "Location access denied. Please enable location permissions in your browser settings.";
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    errorMessage = "Location information is unavailable. Please check your connection and try again.";
+                    break;
+                case error.TIMEOUT:
+                    errorMessage = "The request to get location timed out. Please try again.";
+                    break;
+                default:
+                    errorMessage = "An unknown error occurred while fetching location.";
+            }
+            displayError(errorMessage);
+        }
+
+        function displayMGRS(position) {
             try {
-                const precision = 5;
-                const mgrs = proj4.mgrs.forward([lon, lat], precision);
-                const gridSize = Math.pow(10, 5 - precision);
-
-                elements.mgrsCode.textContent = mgrs;
-                elements.gridPrecision.textContent = `Grid Precision: ${gridSize}m`;
-                elements.horizontalAccuracy.textContent = 
-                    `Horizontal Accuracy: ${position.coords.accuracy.toFixed(1)}m`;
-
-                if (alt) {
-                    elements.altitudeValue.textContent = `Altitude: ${alt.toFixed(1)}m`;
-                    elements.verticalAccuracy.textContent = 
-                        `Vertical Accuracy: ${altAccuracy ? altAccuracy.toFixed(1)+'m' : 'N/A'}`;
-                    elements.altitudeValue.style.display = 'block';
-                    elements.verticalAccuracy.style.display = 'block';
-                    elements.altitudeNa.style.display = 'none';
-                } else {
-                    elements.altitudeValue.style.display = 'none';
-                    elements.verticalAccuracy.style.display = 'none';
-                    elements.altitudeNa.style.display = 'block';
-                }
-
-                // Update time with position updates
-                updateTime();
-
+                const lat = position.coords.latitude;
+                const lon = position.coords.longitude;
+                const mgrsCode = mgrs.forward([lon, lat]);
+                document.getElementById('mgrs').innerText = mgrsCode;
             } catch (e) {
-                elements.error.textContent = `Error converting coordinates: ${e.message}`;
+                document.getElementById('mgrs').innerText = "Conversion error";
+                console.error("MGRS conversion error:", e);
             }
         }
 
-        function handleError(error) {
-            const errors = {1: 'Permission denied', 2: 'Position unavailable', 3: 'Timeout'};
-            elements.error.textContent = `Error: ${errors[error.code] || 'Unknown error'}`;
+        function displayHorizontalAccuracy(position) {
+            const acc = position.coords.accuracy;
+            if (acc === null || acc === undefined) {
+                document.getElementById('horizontalAccuracy').innerText = "Unavailable";
+                return;
+            }
+            
+            let accuracyClass = '';
+            if (acc <= 10) accuracyClass = 'accuracy-good';
+            else if (acc <= 30) accuracyClass = 'accuracy-medium';
+            else accuracyClass = 'accuracy-poor';
+            
+            document.getElementById('horizontalAccuracy').innerHTML = 
+                `<span class="${accuracyClass}">${acc.toFixed(2)} meters</span>`;
         }
 
-        // Initialize date and time updates
-        updateTime();
-        setInterval(updateTime, 1000);   // update per 1 second
+        function displayAltitude(position) {
+            const alt = position.coords.altitude;
+            document.getElementById('altitude').innerText = 
+                alt !== null ? `${alt.toFixed(2)} meters` : "Unavailable";
+        }
 
-        // Initialize position updates
-        getPosition();
-//        setInterval(getPosition, 10000);  // update per 10 second
+        function displayAltitudeAccuracy(position) {
+            const acc = position.coords.altitudeAccuracy;
+            document.getElementById('altitudeAccuracy').innerText = 
+                acc !== null ? `${acc.toFixed(2)} meters` : "Unavailable";
+        }
+
+        function displayCurrentDate() {
+            const currentDate = new Date().toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            document.getElementById('date').innerText = currentDate;
+        }
+
+        function displayCurrentTime() {
+            const currentTime = new Date().toLocaleTimeString('en-US', { 
+                hour: '2-digit', 
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false 
+            });
+            document.getElementById('time').innerText = currentTime;
+        }
+
+        function displayError(message) {
+            const errorElement = document.getElementById('error');
+            errorElement.innerText = `Error: ${message}`;
+            errorElement.style.display = 'block';
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(elapsedSeconds / 60).toString().padStart(2, '0');
+            const seconds = (elapsedSeconds % 60).toString().padStart(2, '0');
+            document.getElementById('timer').innerText = `${minutes}:${seconds}`;
+        }
+
+        function cleanup() {
+            // Stop geolocation tracking
+            if (watchId) {
+                navigator.geolocation.clearWatch(watchId);
+                watchId = null;
+            }
+            
+            // Stop time updates
+            if (timeIntervalId) {
+                clearInterval(timeIntervalId);
+                timeIntervalId = null;
+            }
+            
+            // Stop elapsed timer
+            if (elapsedIntervalId) {
+                clearInterval(elapsedIntervalId);
+                elapsedIntervalId = null;
+            }
+            
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('get-location').textContent = 'Start Location Tracking';
+        }
+
+        function updateCopyrightYear() {
+            const currentYear = new Date().getFullYear();
+            document.getElementById('copyright').innerHTML = `&copy; ${currentYear} Samiux`;
+        }
     </script>
 </body>
 </html>
