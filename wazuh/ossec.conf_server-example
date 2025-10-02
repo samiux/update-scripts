@@ -1,3 +1,5 @@
+...
+
 <ossec_config>
   <integration>
     <name>virustotal</name>
