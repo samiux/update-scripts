@@ -22,24 +22,36 @@
     <!-- Rules for Linux systems -->
     <rule id="100200" level="7">
         <if_sid>550</if_sid>
-        <field name="file">/home/samiux/Downloads</field>
-        <description>File modified in /home/samiux/Downloads directory.</description>
+        <field name="file">/home</field>
+        <description>File modified in /home directory.</description>
     </rule>
     <rule id="100201" level="7">
         <if_sid>554</if_sid>
-        <field name="file">/home/samiux/Downloads</field>
-        <description>File added to /home/samiux/Downloads directory.</description>
+        <field name="file">/home</field>
+        <description>File added to /home directory.</description>
     </rule>
-    <!-- Rules for Windows systems -->
+
     <rule id="100202" level="7">
         <if_sid>550</if_sid>
-        <field name="file">C:\\Users</field>
-        <description>File modified in C:\\Users directory.</description>
+        <field name="file">/tmp</field>
+        <description>File modified in /tmp directory.</description>
     </rule>
     <rule id="100203" level="7">
         <if_sid>554</if_sid>
+        <field name="file">/tmp</field>
+        <description>File added to /tmp directory.</description>
+    </rule>
+
+    <!-- Rules for Windows systems -->
+    <rule id="100204" level="7">
+        <if_sid>550</if_sid>
         <field name="file">C:\\Users</field>
-        <description>File added to C:\\Users directory.</description>
+        <description>File modified in C:\Users directory.</description>
+    </rule>
+    <rule id="100205" level="7">
+        <if_sid>554</if_sid>
+        <field name="file">C:\\Users</field>
+        <description>File added to C:\Users directory.</description>
     </rule>
 </group>
 
