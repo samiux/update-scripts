@@ -11,8 +11,7 @@
     <!-- Directories to check  (perform all possible verifications) -->
     <directories>/etc,/usr/bin,/usr/sbin</directories>
     <directories>/bin,/sbin,/boot</directories>
-    <directories realtime="yes">/home/samiux/Downloads</directories>
-    <directories realtime="yes">/tmp</directories>
+    <directories realtime="yes">/home/samiux/Downloads,/tmp,/root</directories>
 
     <!-- Files/directories to ignore -->
     <ignore>/etc/mtab</ignore>
