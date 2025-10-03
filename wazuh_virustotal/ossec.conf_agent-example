@@ -13,7 +13,8 @@
     <directories>/bin,/sbin,/boot</directories>
 
     <!-- For Linux only : /home and /home/*/ as well as /home/*/* do not work -->
-    <directories realtime="yes">/home/*/Downloads,/home/*/Documents<,/home/*/Public/directories>
+    <directories realtime="yes">/home/*/Downloads,/home/*/Documents,/home/*/Public</directories>
+    <directories realtime="yes">/home/*/Desktop,/home/*/Templates,/home/*/Pictures</directories>
     <!-- For Windows only : C:\Users and C:\Users\*\ as well as C:\Users\*\* do not work too -->
     <!--
     <directories realtime="yes">C:\Users\*\Downloads</directories>
