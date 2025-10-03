@@ -14,7 +14,7 @@
 
     <!-- For Linux only : /home and /home/*/ as well as /home/*/* do not work -->
     <directories realtime="yes">/home/*/Downloads,/home/*/Documents<,/home/*/Public/directories>
-    <!-- For Windows only : C:\Users\ and C:\Users\*\ as well as C:\Users\*\* do not work too -->
+    <!-- For Windows only : C:\Users and C:\Users\*\ as well as C:\Users\*\* do not work too -->
     <!--
     <directories realtime="yes">C:\Users\*\Downloads</directories>
     -->
