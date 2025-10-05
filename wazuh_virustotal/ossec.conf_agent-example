@@ -8,9 +8,7 @@
 
     <scan_on_start>yes</scan_on_start>
 
-    <!-- Directories to check  (perform all possible verifications) -->
-    <directories>/etc,/usr/bin,/usr/sbin</directories>
-    <directories>/bin,/sbin,/boot</directories>
+....
 
     <!-- For Linux only : /home and /home/*/ as well as /home/*/* do not work -->
     <directories realtime="yes">/home/*/Downloads,/home/*/Documents,/home/*/Public</directories>
@@ -20,9 +18,5 @@
     <directories realtime="yes">C:\Users\*\Downloads,C:\Users\*\Documents,C:\Users\*\Desktop</directories>
     <directories realtime="yes">C:\Users\*\Pictures,C:\Users\*\Public</directories>
     -->
-
-    <!-- Files/directories to ignore -->
-    <ignore>/etc/mtab</ignore>
-    <ignore>/etc/hosts.deny</ignore>
 
 ....
