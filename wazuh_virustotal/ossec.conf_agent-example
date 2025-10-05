@@ -17,7 +17,8 @@
     <directories realtime="yes">/home/*/Desktop,/home/*/Templates,/home/*/Pictures</directories>
     <!-- For Windows only : C:\Users and C:\Users\*\ as well as C:\Users\*\* do not work too -->
     <!--
-    <directories realtime="yes">C:\Users\*\Downloads</directories>
+    <directories realtime="yes">C:\Users\*\Downloads,C:\Users\*\Documents,C:\Users\*\Desktop</directories>
+    <directories realtime="yes">C:\Users\*\Pictures,C:\Users\*\Public</directories>
     -->
 
     <!-- Files/directories to ignore -->
