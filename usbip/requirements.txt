@@ -1,5 +1,5 @@
 # Ubuntu 26.04 LTS HWE Kernel
-sudo apt install usbip linux-tools-common linux-tools-generic
+sudo apt install linux-tools-common linux-tools-generic
 
 linux-tools-7.0.0-42-generic ???
 
@@ -7,3 +7,12 @@ linux-tools-7.0.0-42-generic ???
 sudo modprobe usbip_host usbip_core usbip_vudc vhci_hcd
 
 sudo usermod samiux -a -G dialout
+
+--------------------
+
+Android USB/IP server app - share USB devices over network  (Tested)
+https://github.com/yunsmall/Android-Usbipdcpp
+
+USB/IP Client for Windows  (Not Tested)
+https://github.com/vadimgrn/usbip-win2
+
