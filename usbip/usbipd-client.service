@@ -3,9 +3,9 @@ Description=usbip client
 After=network.target
 
 [Service]
-Type=oneshot
+Type=oneShot
 RemainAfterExit=yes
-ExecStartPost=/bin/bash -c '/usr/bin/usbip-client_start.sh'
+ExecStart=/bin/bash -c '/usr/bin/usbip-client_start.sh'
 ExecStop=/bin/bash -c '/usr/bin/usbip-client_stop.sh'
 
 [Install]
