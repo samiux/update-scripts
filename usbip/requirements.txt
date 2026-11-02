@@ -1,12 +1,10 @@
-# Ubuntu 26.04 LTS HWE Kernel
+# Ubuntu 26.04 LTS HWE Kernel 7.x
 sudo apt install linux-tools-common linux-tools-generic
-
-linux-tools-7.0.0-42-generic ???
 
 # Load modules (for server and client) (as well as /etc/modules)
 sudo modprobe usbip_host usbip_core usbip_vudc vhci_hcd
 
-sudo usermod samiux -a -G dialout
+sudo usermod $USER -a -G dialout
 
 --------------------
 
