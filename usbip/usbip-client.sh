@@ -75,6 +75,14 @@ remote_busids() {
 scan_once() {
     local port host skey busid key s b
     local attached busids
+    local out
+
+    # 0) vhci_hcd 已"死"状态
+    out=$(usbip port 2>&1) || true
+    if [[ $out == *"open vhci_driver"* ]]; then
+        /usr/sbin/modprobe -r vhci-hcd 2>/dev/null
+        /usr/sbin/modprobe vhci-hcd
+    fi
 
     # 1) 清理"半死"端口：连接已断但 vhci 端口仍占用 -> detach 后重新 attach
     while read -r port; do

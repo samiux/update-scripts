@@ -10,11 +10,14 @@ Type=notify
 NotifyAccess=main
 Environment=USBIP_SERVER_CONF=/etc/usbip/usbip-server.conf
 ExecStart=/usr/bin/usbip-server.sh
+ExecStop=/usr/bin/usbip-server-stop.sh
+ExecStopPost=/usr/bin/usbip-server-poststop.sh
 Restart=always
 RestartSec=3
 WatchdogSec=30
-TimeoutStartSec=20
-OOMScoreAdjust=-500
+KillMode=control-group
+KillSignal=SIGTERM
+FinalKillSignal=SIGKILL
 Nice=-5
 
 [Install]

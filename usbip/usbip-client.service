@@ -9,11 +9,14 @@ Type=notify
 NotifyAccess=main
 Environment=USBIP_CLIENT_CONF=/etc/usbip/usbip-client.conf
 ExecStart=/usr/bin/usbip-client.sh
+ExecStop=/usr/bin/usbip-client-stop.sh
+TimeoutStopSec=20
 Restart=always
 RestartSec=3
 WatchdogSec=30
-TimeoutStartSec=20
-OOMScoreAdjust=-500
+KillMode=control-group
+KillSignal=SIGTERM
+FinalKillSignal=SIGKILL
 
 [Install]
 WantedBy=multi-user.target
