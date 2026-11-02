@@ -1,0 +1,19 @@
+[Unit]
+Description=USB/IP Client (auto-attach, health-check, auto-reconnect)
+Documentation=man:usbip(8)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=notify
+NotifyAccess=main
+Environment=USBIP_CLIENT_CONF=/etc/usbip/usbip-client.conf
+ExecStart=/usr/bin/usbip-client.sh
+Restart=always
+RestartSec=3
+WatchdogSec=30
+TimeoutStartSec=20
+OOMScoreAdjust=-500
+
+[Install]
+WantedBy=multi-user.target

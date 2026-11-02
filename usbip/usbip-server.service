@@ -1,0 +1,21 @@
+[Unit]
+Description=USB/IP Server (auto-export, hotplug, self-healing)
+Documentation=man:usbipd(8) man:usbip(8)
+After=network-online.target
+Wants=network-online.target
+Conflicts=usbipd.service
+
+[Service]
+Type=notify
+NotifyAccess=main
+Environment=USBIP_SERVER_CONF=/etc/usbip/usbip-server.conf
+ExecStart=/usr/bin/usbip-server.sh
+Restart=always
+RestartSec=3
+WatchdogSec=30
+TimeoutStartSec=20
+OOMScoreAdjust=-500
+Nice=-5
+
+[Install]
+WantedBy=multi-user.target

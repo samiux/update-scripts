@@ -1,0 +1,14 @@
+[Unit]
+Description=Start/Stop sharing bound USB devices via USB/IP server
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStart=usbipd -D
+RemainAfterExit=yes
+ExecStop=killall usbipd
+ExecReload=/bin/sh -c "killall usbipd; usbipd -D"
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
