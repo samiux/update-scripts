@@ -8,6 +8,11 @@ sudo usermod $USER -a -G dialout
 
 --------------------
 
+journalctl -t usbip-server -f
+journalctl -t usbip-client -f
+
+--------------------
+
 Android USB/IP server app - share USB devices over network  (Tested)
 https://github.com/yunsmall/Android-Usbipdcpp
 
