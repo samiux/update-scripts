@@ -6,9 +6,6 @@ sudo modprobe usbip_host usbip_core usbip_vudc vhci_hcd
 
 sudo usermod $USER -a -G dialout
 
-# If your remote USB device(s) cannot be mounted on your Ubuntu desktop, try this.
-sudo apt install x2gothinclient-usbmount
-
 --------------------
 
 Android USB/IP server app - share USB devices over network  (Tested)
