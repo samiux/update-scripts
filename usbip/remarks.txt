@@ -19,3 +19,11 @@ https://github.com/yunsmall/Android-Usbipdcpp
 USB/IP Client for Windows  (Not Tested)
 https://github.com/vadimgrn/usbip-win2
 
+---------------------
+
+# Possible usage of Android USB/IP (APK)
+
+- Android TV
+- Android TV Box
+- Android phone/tablet/laptop
+- any more?
