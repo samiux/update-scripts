@@ -8,6 +8,7 @@ Wants=network-online.target
 Type=notify
 NotifyAccess=main
 Environment=USBIP_CLIENT_CONF=/etc/usbip/usbip-client.conf
+ExecStartPre=/usr/bin/usbip-client-stop.sh
 ExecStart=/usr/bin/usbip-client.sh
 ExecStop=/usr/bin/usbip-client-stop.sh
 TimeoutStopSec=20
