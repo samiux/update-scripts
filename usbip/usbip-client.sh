@@ -126,6 +126,8 @@ scan_once() {
             else
                 if [ -z "${reported_fail[attach:$host/$busid]:-}" ]; then
                     log "attach failed $host/$busid (retrying quietly)"
+                    /usr/sbin/modprobe -r vhci-hcd 2>/dev/null
+                    /usr/sbin/modprobe vhci-hcd
                     reported_fail["attach:$host/$busid"]=1
                 fi
             fi
