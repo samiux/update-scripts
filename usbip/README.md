@@ -12,7 +12,7 @@ For security purpose, you may consider to :
 
 The host can be Linux computer or Android device.  The client can be Linux or Windows, but Android does not supported at the moment.
 
-__The scripts are written in Bash and it is a stable version.  It is released under the GPL 3.0 License.__      
+__The scripts (just working, for experiment purpose) are written in Bash and it is a stable version.  It is released under the GPL 3.0 License.__      
 
 __Usage :__
 
