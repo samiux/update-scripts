@@ -7,7 +7,7 @@ USB/IP is now built-in in the latest Linux kernel (e.g. Ubuntu 26.04 HWE kernel 
 For security purpose, you may consider to : 
 
 - [x] hardening the systemd service file at /lib/systemd/system/ (e.g. NoNewPrivileges, ProtectSystem and etc.)       
-- [x] using SSH tunneling for direct connection (for internel network - local)     
+- [x] using SSH tunneling (with iptables) for direct connection (for internel network - local)     
 - [x] using TailScale (or HeadScale - open source) (for remote network - internet)            
 
 The host can be Linux computer or Android device.  The client can be Linux or Windows, but Android does not supported at the moment.
