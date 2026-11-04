@@ -31,6 +31,8 @@ The host (Android device) can be :
 
 ## Ubuntu 26.04 LTS (Host and Client)
 
+Make sure to edit the `usbip-client.conf` for `SERVERS=` to make it work properly (e.g. SERVERS="192.168.0.100").     
+
 ### [A] server side
 
 ```
