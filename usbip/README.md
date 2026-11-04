@@ -23,11 +23,8 @@ The host (Linux server) can share :
 - [x] USB HDDs/SSds    
 - [ ] any more?    
 
-The host (Android device) can share :
+The host (Android device) can be :
 
-- [x] USB Printers    
-- [x] USB Sticks     
-- [x] USB HDDs/SSds    
 - [x] TV Boxes    
 - [x] Smartphones/Tablets    
 - [ ] any more?    
