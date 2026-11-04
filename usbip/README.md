@@ -2,7 +2,7 @@
 
 USB/IP is a general USB device sharing system over IP network. To share USB devices between computers with their full functionality, USB/IP encapsulates "USB I/O messages" into TCP/IP payloads and transmits them between computers.
 
-USB/IP is now built-in in the latest Linux kernel (e.g. Ubuntu 26.04 HWE kernel 7.x).  __WARNING :__ It can share USB devices over the _INTERNAL_ (_LOCAL_) network with no protection or encryption (*__USE WITH CARE__*).  You can access the shared USB devices on your desktop as a USB device mounted locally, you can even play videoes on it too.  
+USB/IP is now built-in in the latest Linux kernel (e.g. Ubuntu 26.04 HWE kernel 7.x).  __WARNING :__ It can share USB devices over the _INTERNAL_ (_LOCAL_) network with no protection or encryption (*__USE WITH CARE__*).  You can access the shared USB devices on your desktop as a USB device mounted locally, you can even play videoes over it too.  
 
 For security purpose, you may consider to : 
 
