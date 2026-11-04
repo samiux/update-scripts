@@ -16,7 +16,7 @@ __The scripts are written in Bash and it is a stable version.  It is released un
 
 __Usage :__
 
-The host (Linux server) can share :
+The host (Linux server/ Android device) can share :
 
 - [x] USB Printers    
 - [x] USB Sticks   
